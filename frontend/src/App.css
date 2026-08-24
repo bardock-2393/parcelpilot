@@ -61,15 +61,20 @@
   gap: 1rem;
 }
 
-.switcher {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--muted);
+.mode-tabs { display: flex; gap: 0.4rem; }
+.mode-tabs button {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--fg);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
+.mode-tabs button.active { background: var(--soft); border-width: 2px; }
 
-.switcher select {
+.account-select {
   background: var(--bg);
   color: var(--fg);
   border: 1.5px solid var(--line);
@@ -78,18 +83,7 @@
   font-size: 0.85rem;
 }
 
-.role-pill {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border: 1.5px solid var(--line);
-  color: var(--fg);
-}
-
-.view-tabs { display: flex; gap: 0.4rem; }
+.view-tabs { display: flex; gap: 0.4rem; padding-left: 1rem; border-left: 1.5px solid var(--line); }
 .view-tabs button {
   background: transparent;
   border: 1.5px solid var(--line);

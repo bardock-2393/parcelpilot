@@ -5,12 +5,15 @@ interface Props {
   accounts: AccountOption[];
   identity: string;
   onIdentityChange: (identity: string) => void;
+  onSelectCustomerMode: () => void;
   role: "customer" | "internal" | null;
   view: ViewName;
   onViewChange: (view: ViewName) => void;
 }
 
-export function TopBar({ accounts, identity, onIdentityChange, role, view, onViewChange }: Props) {
+export function TopBar({ accounts, identity, onIdentityChange, onSelectCustomerMode, role, view, onViewChange }: Props) {
+  const isInternal = identity === "internal";
+
   return (
     <header className="topbar">
       <div className="topbar-brand">
@@ -18,19 +21,24 @@ export function TopBar({ accounts, identity, onIdentityChange, role, view, onVie
       </div>
 
       <div className="topbar-controls">
-        <label className="switcher">
-          <span>Viewing as</span>
-          <select value={identity} onChange={(e) => onIdentityChange(e.target.value)}>
+        <nav className="mode-tabs">
+          <button className={!isInternal ? "active" : ""} onClick={onSelectCustomerMode}>
+            Customer
+          </button>
+          <button className={isInternal ? "active" : ""} onClick={() => onIdentityChange("internal")}>
+            Internal Team
+          </button>
+        </nav>
+
+        {!isInternal && (
+          <select className="account-select" value={identity} onChange={(e) => onIdentityChange(e.target.value)}>
             {accounts.map((a) => (
               <option key={a.account_id} value={a.account_id}>
                 {a.account_name}
               </option>
             ))}
-            <option value="internal">Internal — Ops</option>
           </select>
-        </label>
-
-        {role && <span className={`role-pill role-${role}`}>{role === "internal" ? "Internal" : "Customer"}</span>}
+        )}
 
         {role === "internal" && (
           <nav className="view-tabs">

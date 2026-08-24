@@ -7,10 +7,14 @@ import type { ViewName } from "./types";
 import "./App.css";
 
 const IDENTITY_KEY = "parcelpilot_identity";
+const LAST_CUSTOMER_KEY = "parcelpilot_last_customer_account";
 
 export default function App() {
   const [accounts, setAccounts] = useState<AccountOption[]>([]);
-  const [identity, setIdentity] = useState<string>(() => localStorage.getItem(IDENTITY_KEY) ?? "");
+  const [identity, setIdentity] = useState<string>(() => localStorage.getItem(IDENTITY_KEY) ?? "internal");
+  const [lastCustomerAccount, setLastCustomerAccount] = useState<string>(
+    () => localStorage.getItem(LAST_CUSTOMER_KEY) ?? "",
+  );
   const [session, setSession] = useState<SessionInfo | null>(null);
   const [view, setView] = useState<ViewName>("chat");
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +24,7 @@ export default function App() {
       .listAccounts()
       .then((list) => {
         setAccounts(list);
-        setIdentity((current) => current || list[0]?.account_id || "internal");
+        setIdentity((current) => current || "internal");
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -28,12 +32,20 @@ export default function App() {
   useEffect(() => {
     if (!identity) return;
     localStorage.setItem(IDENTITY_KEY, identity);
+    if (identity !== "internal") {
+      setLastCustomerAccount(identity);
+      localStorage.setItem(LAST_CUSTOMER_KEY, identity);
+    }
     api
       .createSession(identity)
       .then(setSession)
       .catch((e) => setError(e.message));
     setView("chat");
   }, [identity]);
+
+  function selectCustomerMode() {
+    setIdentity(lastCustomerAccount || accounts[0]?.account_id || "");
+  }
 
   if (error) {
     return (
@@ -49,6 +61,7 @@ export default function App() {
         accounts={accounts}
         identity={identity}
         onIdentityChange={setIdentity}
+        onSelectCustomerMode={selectCustomerMode}
         role={session?.role ?? null}
         view={view}
         onViewChange={setView}
