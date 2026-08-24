@@ -30,9 +30,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.85rem 1.5rem;
-  background: var(--fg);
-  color: var(--bg);
-  border-bottom: 2px solid var(--fg);
+  background: var(--bg);
+  color: var(--fg);
+  border-bottom: 1.5px solid var(--line);
 }
 
 .topbar-brand {
@@ -54,13 +54,13 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: var(--bg);
+  color: var(--muted);
 }
 
 .switcher select {
   background: var(--bg);
   color: var(--fg);
-  border: 1.5px solid var(--bg);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius);
   padding: 0.35rem 0.6rem;
   font-size: 0.85rem;
@@ -73,22 +73,22 @@
   border-radius: var(--radius);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border: 1.5px solid var(--bg);
-  color: var(--bg);
+  border: 1.5px solid var(--line);
+  color: var(--fg);
 }
 
 .view-tabs { display: flex; gap: 0.4rem; }
 .view-tabs button {
   background: transparent;
-  border: 1.5px solid var(--bg);
-  color: var(--bg);
+  border: 1.5px solid var(--line);
+  color: var(--fg);
   padding: 0.35rem 0.75rem;
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 600;
 }
-.view-tabs button.active { background: var(--bg); color: var(--fg); }
+.view-tabs button.active { background: var(--fg); color: var(--bg); }
 
 /* ---- Main ---- */
 .app-main { flex: 1; overflow: hidden; display: flex; }
@@ -247,10 +247,6 @@
 
 @media (prefers-color-scheme: dark) {
   :root { --bg: #000000; --fg: #ffffff; --line: #ffffff; --muted: #999999; --panel: #000000; }
-  .topbar { background: var(--fg); color: var(--bg); border-bottom-color: var(--fg); }
-  .switcher, .role-pill, .view-tabs button { color: var(--bg); border-color: var(--bg); }
-  .switcher select { background: var(--bg); color: var(--fg); border-color: var(--bg); }
-  .view-tabs button.active { background: var(--bg); color: var(--fg); }
   .message-bubble.user { background: var(--fg); color: var(--bg); }
   .escalation-result.created { background: var(--fg); color: var(--bg); }
   .severity-dot.severity-red { background: var(--fg); color: var(--bg); }
