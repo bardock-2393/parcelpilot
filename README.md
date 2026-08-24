@@ -7,9 +7,10 @@ and internal ops dashboard.
 See also: [`docs/architecture.md`](docs/architecture.md), [`docs/product.md`](docs/product.md),
 [`docs/ai_tool_usage.md`](docs/ai_tool_usage.md).
 
-**Demo video:** not yet recorded — script at [`docs/demo_video_script.md`](docs/demo_video_script.md).
-Once recorded, either drop the file at `docs/demo_video.mp4` and update this line to link
-to it, or paste a YouTube/Loom URL here.
+**Testing & demo video:** full test-prompt catalogue and recording script at
+[`docs/testing_and_demo_guide.md`](docs/testing_and_demo_guide.md). Demo video not yet
+recorded — once it is, drop the file at `docs/demo_video.mp4` and update this line to
+link to it, or paste a YouTube/Loom URL here.
 
 ## Stack
 
