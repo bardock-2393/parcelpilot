@@ -13,6 +13,10 @@ UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", BASE_DIR / "uploads"))
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+# Verified working against this project's API key/gateway (checked with models.get +
+# a live generate_content call each) -- each has its own separate daily free-tier quota,
+# so offering a choice on the frontend lets you keep working when one is exhausted.
+AVAILABLE_MODELS = ["gemini-3.6-flash", "gemini-flash-latest", "gemini-pro-latest"]
 GEMINI_EMBEDDING_MODEL = os.environ.get("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001")
 
 # Reference "now" for all time-based logic, per the assessment workbook's README snapshot.

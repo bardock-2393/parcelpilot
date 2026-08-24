@@ -74,7 +74,7 @@
 }
 .mode-tabs button.active { background: var(--soft); border-width: 2px; }
 
-.account-select {
+.account-select, .model-select {
   background: var(--bg);
   color: var(--fg);
   border: 1.5px solid var(--line);
@@ -82,6 +82,7 @@
   padding: 0.35rem 0.6rem;
   font-size: 0.85rem;
 }
+.model-select { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.78rem; }
 
 .view-tabs { display: flex; gap: 0.4rem; padding-left: 1rem; border-left: 1.5px solid var(--line); }
 .view-tabs button {

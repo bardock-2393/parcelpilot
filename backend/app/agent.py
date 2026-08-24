@@ -136,9 +136,10 @@ FALLBACK_MESSAGE = (
 )
 
 
-async def run_turn(identity: Identity, user_message: str) -> dict:
+async def run_turn(identity: Identity, user_message: str, model: str | None = None) -> dict:
     turn_id = uuid.uuid4().hex[:12]
     client = get_client()
+    model = model or GEMINI_MODEL
     _save_message(identity.session_id, "user", user_message)
     log_step(identity.session_id, turn_id, identity.account_id, "user_message", input_data=user_message)
 
@@ -152,7 +153,7 @@ async def run_turn(identity: Identity, user_message: str) -> dict:
     while True:
         response = await call_with_retry(
             client.models.generate_content,
-            model=GEMINI_MODEL,
+            model=model,
             contents=contents,
             config=config,
         )

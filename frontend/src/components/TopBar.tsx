@@ -9,9 +9,23 @@ interface Props {
   role: "customer" | "internal" | null;
   view: ViewName;
   onViewChange: (view: ViewName) => void;
+  modelOptions: string[];
+  model: string;
+  onModelChange: (model: string) => void;
 }
 
-export function TopBar({ accounts, identity, onIdentityChange, onSelectCustomerMode, role, view, onViewChange }: Props) {
+export function TopBar({
+  accounts,
+  identity,
+  onIdentityChange,
+  onSelectCustomerMode,
+  role,
+  view,
+  onViewChange,
+  modelOptions,
+  model,
+  onModelChange,
+}: Props) {
   const isInternal = identity === "internal";
 
   return (
@@ -39,6 +53,14 @@ export function TopBar({ accounts, identity, onIdentityChange, onSelectCustomerM
             ))}
           </select>
         )}
+
+        <select className="model-select" value={model} onChange={(e) => onModelChange(e.target.value)}>
+          {modelOptions.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
 
         {role === "internal" && (
           <nav className="view-tabs">

@@ -9,6 +9,7 @@ import "./App.css";
 
 const IDENTITY_KEY = "parcelpilot_identity";
 const LAST_CUSTOMER_KEY = "parcelpilot_last_customer_account";
+const MODEL_KEY = "parcelpilot_model";
 
 export default function App() {
   const [accounts, setAccounts] = useState<AccountOption[]>([]);
@@ -19,6 +20,8 @@ export default function App() {
   const [session, setSession] = useState<SessionInfo | null>(null);
   const [view, setView] = useState<ViewName>("chat");
   const [error, setError] = useState<string | null>(null);
+  const [modelOptions, setModelOptions] = useState<string[]>([]);
+  const [model, setModel] = useState<string>(() => localStorage.getItem(MODEL_KEY) ?? "");
 
   useEffect(() => {
     api
@@ -28,7 +31,20 @@ export default function App() {
         setIdentity((current) => current || "internal");
       })
       .catch((e) => setError(e.message));
+
+    api
+      .listModels()
+      .then(({ default: def, options }) => {
+        setModelOptions(options);
+        setModel((current) => (options.includes(current) ? current : def));
+      })
+      .catch(() => {});
   }, []);
+
+  function changeModel(next: string) {
+    setModel(next);
+    localStorage.setItem(MODEL_KEY, next);
+  }
 
   useEffect(() => {
     if (!identity) return;
@@ -66,12 +82,15 @@ export default function App() {
         role={session?.role ?? null}
         view={view}
         onViewChange={setView}
+        modelOptions={modelOptions}
+        model={model}
+        onModelChange={changeModel}
       />
       <main className="app-main">
         {!session ? (
           <div className="app-loading">Loading…</div>
         ) : view === "chat" ? (
-          <ChatView sessionId={session.session_id} />
+          <ChatView sessionId={session.session_id} model={model} />
         ) : view === "ops" ? (
           <OpsDashboard sessionId={session.session_id} />
         ) : (

@@ -41,6 +41,11 @@ export interface FlaggedIssue {
   created_at: string;
 }
 
+export interface ModelOptions {
+  default: string;
+  options: string[];
+}
+
 export interface DocumentInfo {
   source_file: string;
   doc_type: string;
@@ -68,11 +73,12 @@ export const api = {
     request<SessionInfo>("/api/auth/session", { method: "POST", body: JSON.stringify({ identity }) }),
   history: (session_id: string) =>
     request<ChatMessage[]>(`/api/chat/history?session_id=${encodeURIComponent(session_id)}`),
-  chat: (session_id: string, message: string) =>
+  chat: (session_id: string, message: string, model?: string) =>
     request<{ text: string; tool_calls: string[]; escalation_draft: EscalationDraft | null }>("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ session_id, message }),
+      body: JSON.stringify({ session_id, message, model }),
     }),
+  listModels: () => request<ModelOptions>("/api/chat/models"),
   confirmAction: (session_id: string, token: string, action: "confirm" | "cancel") =>
     request<{ status: string; escalation_id?: string; reason?: string }>("/api/chat/confirm-action", {
       method: "POST",

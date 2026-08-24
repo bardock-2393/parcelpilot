@@ -6,6 +6,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, field_validator
 
 from app.agent import get_history, run_turn
+from app.config import AVAILABLE_MODELS, GEMINI_MODEL
 from app.dependencies import resolve_identity
 from app.tools import cancel_escalation, confirm_escalation
 
@@ -16,12 +17,20 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 class ChatRequest(BaseModel):
     session_id: str
     message: str
+    model: str | None = None
 
     @field_validator("message")
     @classmethod
     def not_blank(cls, v: str) -> str:
         if not v or not v.strip():
             raise ValueError("message must not be empty")
+        return v
+
+    @field_validator("model")
+    @classmethod
+    def known_model(cls, v: str | None) -> str | None:
+        if v and v not in AVAILABLE_MODELS:
+            raise ValueError(f"model must be one of {AVAILABLE_MODELS}")
         return v
 
 
@@ -37,11 +46,16 @@ def history(session_id: str):
     return get_history(session_id)
 
 
+@router.get("/models")
+def models():
+    return {"default": GEMINI_MODEL, "options": AVAILABLE_MODELS}
+
+
 @router.post("")
 async def chat(req: ChatRequest):
     identity = resolve_identity(req.session_id)
     try:
-        return await run_turn(identity, req.message)
+        return await run_turn(identity, req.message, model=req.model)
     except Exception:
         log.exception("Agent turn failed for session %s", req.session_id)
         raise HTTPException(502, "The assistant is temporarily unavailable. Please try again.")
@@ -53,7 +67,7 @@ async def chat_stream(req: ChatRequest):
 
     async def event_source():
         try:
-            result = await run_turn(identity, req.message)
+            result = await run_turn(identity, req.message, model=req.model)
         except Exception:
             log.exception("Agent turn failed for session %s", req.session_id)
             yield f"event: error\ndata: {json.dumps({'message': 'The assistant is temporarily unavailable. Please try again.'})}\n\n"

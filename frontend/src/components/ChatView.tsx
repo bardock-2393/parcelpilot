@@ -13,7 +13,7 @@ interface LocalMessage extends ChatMessage {
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
-export function ChatView({ sessionId }: { sessionId: string }) {
+export function ChatView({ sessionId, model }: { sessionId: string; model: string }) {
   const [messages, setMessages] = useState<LocalMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -43,7 +43,7 @@ export function ChatView({ sessionId }: { sessionId: string }) {
       const res = await fetch(`${API_URL}/api/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, message: text }),
+        body: JSON.stringify({ session_id: sessionId, message: text, model }),
       });
       if (!res.body) throw new Error("No response stream");
       const reader = res.body.getReader();
