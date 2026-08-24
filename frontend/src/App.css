@@ -1,10 +1,10 @@
 :root {
-  --bg: #ffffff;
-  --fg: #000000;
-  --line: #000000;
-  --muted: #666666;
-  --panel: #ffffff;
-  --soft: #f4f4f4;
+  --bg: #faf6f0;
+  --fg: #2b2420;
+  --line: #2b2420;
+  --muted: #83766a;
+  --panel: #faf6f0;
+  --soft: #efe6d8;
   --radius: 4px;
 }
 
@@ -248,5 +248,5 @@
 .ops-card-timestamp { font-size: 0.68rem; color: var(--muted); margin-top: 0.6rem; }
 
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #000000; --fg: #ffffff; --line: #ffffff; --muted: #999999; --panel: #000000; --soft: #1a1a1a; }
+  :root { --bg: #1c1712; --fg: #f2e9dc; --line: #f2e9dc; --muted: #a89986; --panel: #1c1712; --soft: #2c241d; }
 }
