@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, type ChatMessage, type EscalationDraft } from "../api";
 import { ToolBadges } from "./ToolBadges";
 import { EscalationCard, EscalationResultBadge } from "./EscalationCard";
+import { Markdown } from "./Markdown";
 
 interface LocalMessage extends ChatMessage {
   escalationDraft?: EscalationDraft;
@@ -117,7 +118,11 @@ export function ChatView({ sessionId }: { sessionId: string }) {
         {messages.map((msg, i) => (
           <div key={i} className={`message-row ${msg.role}`}>
             <div className={`message-bubble ${msg.role} ${msg.isError ? "amber" : ""}`}>
-              {msg.content || (sending && i === messages.length - 1 ? "…" : "")}
+              {msg.role === "model" ? (
+                msg.content ? <Markdown content={msg.content} /> : sending && i === messages.length - 1 ? "…" : ""
+              ) : (
+                msg.content
+              )}
             </div>
             {msg.role === "model" && <ToolBadges tools={msg.tool_calls} />}
             {msg.role === "model" && msg.escalationDraft && !msg.escalationState && (
