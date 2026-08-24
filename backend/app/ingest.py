@@ -20,27 +20,30 @@ DOC_META = {
 EMBED_BATCH = 16
 
 
+def _chunks_for_file(path, filename: str, doc_type: str, status: str, account_scope: str | None, authority_rank: int):
+    doc = pymupdf.open(path)
+    for page_num, page in enumerate(doc, start=1):
+        text = page.get_text().strip()
+        if not text:
+            continue
+        doc_id = f"{filename}::p{page_num}"
+        yield {
+            "doc_id": doc_id,
+            "text": text,
+            "metadata": {
+                "source_file": filename,
+                "doc_type": doc_type,
+                "status": status,
+                "account_scope": account_scope or "",
+                "authority_rank": authority_rank,
+                "page": page_num,
+            },
+        }
+
+
 def _chunks():
     for filename, (doc_type, status, account_scope, authority_rank) in DOC_META.items():
-        path = DATA_DIR / filename
-        doc = pymupdf.open(path)
-        for page_num, page in enumerate(doc, start=1):
-            text = page.get_text().strip()
-            if not text:
-                continue
-            doc_id = f"{filename}::p{page_num}"
-            yield {
-                "doc_id": doc_id,
-                "text": text,
-                "metadata": {
-                    "source_file": filename,
-                    "doc_type": doc_type,
-                    "status": status,
-                    "account_scope": account_scope or "",
-                    "authority_rank": authority_rank,
-                    "page": page_num,
-                },
-            }
+        yield from _chunks_for_file(DATA_DIR / filename, filename, doc_type, status, account_scope, authority_rank)
 
 
 def _embed(texts: list[str], task_type: str) -> list[list[float]]:
@@ -76,6 +79,46 @@ def ingest() -> dict:
 
 def embed_query(query: str) -> list[float]:
     return _embed([query], task_type="RETRIEVAL_QUERY")[0]
+
+
+def ingest_uploaded_file(
+    path, filename: str, doc_type: str, status: str, account_scope: str | None
+) -> dict:
+    """Same idempotent upsert-by-doc_id path as the bulk ingest, for a single
+    internally-uploaded PDF. authority_rank is derived rather than user-chosen,
+    to keep the source hierarchy consistent with the seeded documents."""
+    authority_rank = 0 if doc_type == "agreement" else (3 if status == "deprecated" else 1)
+    chunks = list(_chunks_for_file(path, filename, doc_type, status, account_scope, authority_rank))
+    if not chunks:
+        return {"chunks_ingested": 0, "source_file": filename}
+    collection = get_collection()
+    ids = [c["doc_id"] for c in chunks]
+    texts = [c["text"] for c in chunks]
+    metadatas = [c["metadata"] for c in chunks]
+    embeddings = _embed(texts, task_type="RETRIEVAL_DOCUMENT")
+    collection.upsert(ids=ids, embeddings=embeddings, documents=texts, metadatas=metadatas)
+    return {"chunks_ingested": len(ids), "source_file": filename}
+
+
+def list_documents() -> list[dict]:
+    """One row per source_file, aggregated from chunk metadata already in Chroma."""
+    collection = get_collection()
+    all_meta = collection.get(include=["metadatas"])["metadatas"] or []
+    by_file: dict[str, dict] = {}
+    for meta in all_meta:
+        entry = by_file.setdefault(
+            meta["source_file"],
+            {
+                "source_file": meta["source_file"],
+                "doc_type": meta["doc_type"],
+                "status": meta["status"],
+                "account_scope": meta["account_scope"] or None,
+                "authority_rank": meta["authority_rank"],
+                "chunk_count": 0,
+            },
+        )
+        entry["chunk_count"] += 1
+    return sorted(by_file.values(), key=lambda d: (d["authority_rank"], d["source_file"]))
 
 
 if __name__ == "__main__":

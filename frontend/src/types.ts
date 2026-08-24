@@ -1,1 +1,1 @@
-export type ViewName = "chat" | "ops";
+export type ViewName = "chat" | "ops" | "docs";

@@ -48,6 +48,9 @@ export function TopBar({ accounts, identity, onIdentityChange, onSelectCustomerM
             <button className={view === "ops" ? "active" : ""} onClick={() => onViewChange("ops")}>
               Ops Dashboard
             </button>
+            <button className={view === "docs" ? "active" : ""} onClick={() => onViewChange("docs")}>
+              Documents
+            </button>
           </nav>
         )}
       </div>

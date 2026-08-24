@@ -119,6 +119,17 @@ Scheduled/on-demand job → same SQL database → flagged_issues table → ops d
 
 Full detail in [`docs/architecture.md`](docs/architecture.md).
 
+## Uploading additional documents (Internal Team → Documents)
+
+Beyond the fixed data pack, Internal Team sessions can upload new PDFs through the
+**Documents** tab: pick a doc type, current/deprecated status, and an optional
+account-scope, then upload. The file is parsed with PyMuPDF, chunked by page, embedded,
+and upserted into the same ChromaDB collection `search_documents` queries — so it's
+immediately usable in chat, with the same source-authority rules as the seeded docs
+(`agreement` → highest authority, `deprecated` → lowest). Not part of the assessment's
+minimum requirements; added per its "feel free to add more data" allowance. Uploaded
+files are stored in `backend/uploads/` (gitignored).
+
 ## Manually running the proactive-detection job
 
 ```bash

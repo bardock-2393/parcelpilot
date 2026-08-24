@@ -3,6 +3,7 @@ import { api, type AccountOption, type SessionInfo } from "./api";
 import { TopBar } from "./components/TopBar";
 import { ChatView } from "./components/ChatView";
 import { OpsDashboard } from "./components/OpsDashboard";
+import { DocumentsView } from "./components/DocumentsView";
 import type { ViewName } from "./types";
 import "./App.css";
 
@@ -71,8 +72,10 @@ export default function App() {
           <div className="app-loading">Loading…</div>
         ) : view === "chat" ? (
           <ChatView sessionId={session.session_id} />
-        ) : (
+        ) : view === "ops" ? (
           <OpsDashboard sessionId={session.session_id} />
+        ) : (
+          <DocumentsView sessionId={session.session_id} accounts={accounts} />
         )}
       </main>
     </div>

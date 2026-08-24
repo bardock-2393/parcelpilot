@@ -41,6 +41,15 @@ export interface FlaggedIssue {
   created_at: string;
 }
 
+export interface DocumentInfo {
+  source_file: string;
+  doc_type: string;
+  status: string;
+  account_scope: string | null;
+  authority_rank: number;
+  chunk_count: number;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
@@ -75,4 +84,28 @@ export const api = {
     request<Record<string, number>>(`/api/ops/run-detection?session_id=${encodeURIComponent(session_id)}`, {
       method: "POST",
     }),
+  listDocuments: (session_id: string) =>
+    request<DocumentInfo[]>(`/api/ops/documents?session_id=${encodeURIComponent(session_id)}`),
+  uploadDocument: async (
+    session_id: string,
+    file: File,
+    doc_type: string,
+    status: string,
+    account_scope: string,
+  ) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("doc_type", doc_type);
+    form.append("status", status);
+    form.append("account_scope", account_scope);
+    const res = await fetch(`${API_URL}/api/ops/documents?session_id=${encodeURIComponent(session_id)}`, {
+      method: "POST",
+      body: form, // no Content-Type header -- the browser sets the multipart boundary itself
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(body.detail ?? `Upload failed (${res.status})`);
+    }
+    return res.json() as Promise<{ chunks_ingested: number; source_file: string }>;
+  },
 };
