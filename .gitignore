@@ -1,0 +1,21 @@
+# data pack (download step documented in README instead)
+data/
+
+# backend
+backend/.venv/
+backend/.env
+backend/__pycache__/
+backend/**/__pycache__/
+backend/parcelpilot.db
+backend/chroma_db/
+backend/.pytest_cache/
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# misc
+.DS_Store
+*.log
