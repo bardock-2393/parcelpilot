@@ -106,6 +106,14 @@ def get_history(session_id: str) -> list[dict]:
     ]
 
 
+def clear_history(session_id: str) -> None:
+    """Clears the visible conversation only -- agent_traces (the audit log) is
+    intentionally untouched, since it's meant to be a durable record even of
+    conversations the user has cleared from their own view."""
+    with session_scope() as conn:
+        conn.execute("DELETE FROM messages WHERE session_id = ?", (session_id,))
+
+
 def _execute_tool(tool_name: str, args: dict, identity: Identity) -> dict:
     try:
         if tool_name == "search_documents":

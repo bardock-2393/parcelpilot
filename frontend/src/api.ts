@@ -73,6 +73,10 @@ export const api = {
     request<SessionInfo>("/api/auth/session", { method: "POST", body: JSON.stringify({ identity }) }),
   history: (session_id: string) =>
     request<ChatMessage[]>(`/api/chat/history?session_id=${encodeURIComponent(session_id)}`),
+  clearHistory: (session_id: string) =>
+    request<{ status: string }>(`/api/chat/history?session_id=${encodeURIComponent(session_id)}`, {
+      method: "DELETE",
+    }),
   chat: (session_id: string, message: string, model?: string) =>
     request<{ text: string; tool_calls: string[]; escalation_draft: EscalationDraft | null }>("/api/chat", {
       method: "POST",

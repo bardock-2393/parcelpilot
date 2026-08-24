@@ -112,8 +112,19 @@ export function ChatView({ sessionId, model }: { sessionId: string; model: strin
     });
   }
 
+  async function clearChat() {
+    if (!confirm("Clear this conversation? This can't be undone.")) return;
+    await api.clearHistory(sessionId).catch(() => {});
+    setMessages([]);
+  }
+
   return (
     <div className="chat-view">
+      <div className="chat-header">
+        <button className="btn-secondary chat-clear" onClick={clearChat} disabled={messages.length === 0}>
+          Clear chat
+        </button>
+      </div>
       <div className="chat-scroll" ref={scrollRef}>
         {messages.map((msg, i) => (
           <div key={i} className={`message-row ${msg.role}`}>

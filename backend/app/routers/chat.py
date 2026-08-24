@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, field_validator
 
-from app.agent import get_history, run_turn
+from app.agent import clear_history, get_history, run_turn
 from app.config import AVAILABLE_MODELS, GEMINI_MODEL
 from app.dependencies import resolve_identity
 from app.tools import cancel_escalation, confirm_escalation
@@ -49,6 +49,13 @@ def history(session_id: str):
 @router.get("/models")
 def models():
     return {"default": GEMINI_MODEL, "options": AVAILABLE_MODELS}
+
+
+@router.delete("/history")
+def delete_history(session_id: str):
+    resolve_identity(session_id)  # 401 if unknown
+    clear_history(session_id)
+    return {"status": "cleared"}
 
 
 @router.post("")

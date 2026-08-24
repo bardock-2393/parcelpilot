@@ -111,6 +111,10 @@
   padding: 1.25rem 1.5rem;
 }
 
+.chat-header { display: flex; justify-content: flex-end; padding-bottom: 0.6rem; }
+.chat-clear { padding: 0.3rem 0.7rem; font-size: 0.75rem; }
+.chat-clear:disabled { opacity: 0.35; cursor: default; }
+
 .chat-scroll {
   flex: 1;
   overflow-y: auto;
