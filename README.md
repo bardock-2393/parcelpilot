@@ -4,6 +4,8 @@ An AI support agent for ParcelPilot: a Gemini-powered chat assistant (with docum
 structured-data lookups, and confirm-first escalations) plus a proactive issue-detection job
 and internal ops dashboard.
 
+**Live app:** http://54.226.129.232 · **Visual architecture doc:** https://bardock-2393.github.io/parcelpilot/architecture.html
+
 See also: [`docs/architecture.md`](docs/architecture.md), [`docs/product.md`](docs/product.md),
 [`docs/ai_tool_usage.md`](docs/ai_tool_usage.md).
 
