@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: backend/.env
+    environment:
+      DATA_DIR: /data
+      DB_PATH: /state/parcelpilot.db
+      CHROMA_DIR: /state/chroma_db
+      UPLOAD_DIR: /state/uploads
+    volumes:
+      - ./data:/data:ro
+      - backend_state:/state
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_state:
