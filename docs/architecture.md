@@ -1,7 +1,5 @@
 # Architecture Note
 
-Visual companion (diagrams, request trace): https://claude.ai/code/artifact/dbfcd433-040e-482d-92eb-c62d84413db7
-
 ## Agent design
 
 The agent is a plain tool-calling loop against Gemini's function calling (no LangGraph,
