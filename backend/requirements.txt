@@ -1,6 +1,6 @@
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
-pydantic==2.10.3
+pydantic>=2.12.5,<3.0.0
 google-genai==2.19.0
 chromadb==0.5.23
 pymupdf==1.25.1
